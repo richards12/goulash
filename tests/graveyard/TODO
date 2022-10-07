@@ -1,0 +1,19 @@
+add a library: Fortran with no OpenMP offload. so that it can be compiled with ftn
+  libblahblahblah.a || libmeh.h
+
+Add options to enable or diable programming models, i.e. -DENABLE_LIBFLIB, ect.
+  Have cmake be able to turn them on/off
+  Also for make files  
+
+Include BLT?
+
+CMakeList files to build everythibg
+  Each Library should have its own CMakeLists.txt
+  FindXXX.cmake should be used to pull things
+
+Spack packages for everything
+  We can then programatically have a way to test many permutations of options and compilers
+
+Name changes
+  Project -> Graveyard
+  Libraries and source files should also be changed to something sensible.  
