@@ -17,3 +17,7 @@ Spack packages for everything
 Name changes
   Project -> Graveyard
   Libraries and source files should also be changed to something sensible.  
+
+Add MPI
+  Allgather on a status flag || Allreduce with max operator
+  Down the road maybe a halo exhange?

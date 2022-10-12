@@ -1,12 +1,12 @@
-#FC=ftn
-#CC=CC
-
 FC=/usr/tce/packages/rocmcc-tce/rocmcc-5.2.3-cce-14.0.3/bin/crayftn
 CC=/usr/tce/packages/rocmcc-tce/rocmcc-5.2.3-cce-14.0.3/bin/amdclang++
 
 ROCM_PATH=/opt/rocm-5.2.3
+LIB_F_PREFIX ?=./lib_f
+LIB_H_PREFIX ?=./lib_h
 
-CXX_FLAGS=-O3
+
+CXX_FLAGS=-O3 -I$(LIB_F_PREFIX) -I$(LIB_H_PREFIX)
 HIP_FLAGS=-I${ROCM_PATH}/include -fgpu-rdc --rocm-path=${ROCM_PATH} --offload-arch=gfx90a -x hip
 FORTRAN_FLAGS=-h omp -haccel=amd_gfx90a
 
@@ -21,18 +21,22 @@ runGhoul: main.o libhlib.a libflib.a
 main.o: main.cpp
 	$(CC) $(CXX_FLAGS) $(HIP_FLAGS) -o $@ -c $<
 
-suskevi.o: suskevi.cpp
-	$(CC) $(CXX_FLAGS) $(HIP_FLAGS) -o $@ -c $<
+.PHONY: libflib.a libhlib.a
+libflib.a: export FC:=$(FC)
+libflib.a: export FORTRAN_FLAGS:= $(FORTRAN_FLAGS)
+libflib.a:
+	make -C lib_f
+	cp lib_f/libflib.a .
 
-libhlib.a: suskevi.o
-	ar rcs $@ $^
-
-foo_mod.o: foo_mod.f90
-	$(FC) $(FORTRAN_FLAGS) -o $@ -c $<
-
-libflib.a: foo_mod.o
-	ar rcs $@ $^
+libhlib.a: export CC:=$(CC)
+libhlib.a: export CXX_FLAGS:=$(CXX_FLAGS)
+libhlib.a: export HIP_FLAGS:=$(HIP_FLAGS)
+libhlib.a:
+	make -C lib_h
+	cp lib_h/libhlib.a .
 
 .PHONY: clean
 clean:
 	rm -rf *.o runGhoul *core FOO.mod foo_mod_1.acc.s libhlib.a libflib.a
+	make -C lib_f clean
+	make -C lib_h clean
