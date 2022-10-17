@@ -5,14 +5,14 @@ CC=CC
 LIB_F_PREFIX ?=./lib_f
 LIB_H_PREFIX ?=./lib_h
 
-CXX_FLAGS = -O3 -I$(LIB_F_PREFIX) -I$(LIB_H_PREFIX)
+CXX_FLAGS = -O3 -I$(LIB_F_PREFIX) -I$(LIB_H_PREFIX) -DENABLE_FLIB -DENABLE_HLIB
 HIP_FLAGS = -I${ROCM_PATH}/include -fgpu-rdc --rocm-path=${ROCM_PATH} --offload-arch=gfx90a -x hip
 FORTRAN_FLAGS=-h omp
 
 LFLAGS=-fopenmp
 HIP_LINK_FLAGS=-fopenmp -fgpu-rdc --hip-link --offload-arch=gfx90a --rocm-path=${ROCM_PATH} -L${ROCM_PATH}/lib -lamdhip64
 
-runGhoul: main.o libflib.a libhlib.a 
+runGraveyard: main.o libflib.a libhlib.a 
 	$(CC) -o $@ $(HIP_LINK_FLAGS) $^
 
 main.o: main.cpp
@@ -34,6 +34,6 @@ libhlib.a:
 
 .PHONY: clean
 clean:
-	rm -rf *.o runGhoul *core FOO.mod foo_mod_1.acc.s libhlib.a libflib.a
+	rm -rf *.o runGraveyard *core FOO.mod foo_mod_1.acc.s libhlib.a libflib.a
 	make -C lib_f clean
 	make -C lib_h clean

@@ -15,11 +15,12 @@ set(CMAKE_Fortran_COMPILER "/opt/cray/pe/craype/2.7.17/bin/ftn" CACHE FILEPATH "
 #set(CMAKE_HIP_COMPILER "/g/g12/makrides/programs/ghoulash/build_2/amdcompiler" CACHE FILEPATH "") # CMAKE doesn't like this, CLANGRT_BUILTINS-NOTFOUND
 set(GRAVEYARD_ROCM_PATH "/opt/rocm-5.2.3" CACHE PATH "ROCm Path")
 #set(CMAKE_HIP_COMPILER "${GRAVEYARD_ROCM_PATH}/bin/hipcc" CACHE FILEPATH "") # CMAKE doesn't like this, CLANGRT_BUILTINS-NOTFOUND
+#set(CMAKE_HIP_COMPILER "${GRAVEYARD_ROCM_PATH}/bin/amdclang++" CACHE FILEPATH "") # CMAKE doesn't like this, CLANGRT_BUILTINS-NOTFOUND
+
 project( "Graveyard"
         LANGUAGES CXX Fortran HIP
         VERSION ${GRAVEYARD_VERSION} )
 
-#set(CMAKE_HIP_COMPILER "${GRAVEYARD_ROCM_PATH}/bin/amdclang++" CACHE FILEPATH "") # CMAKE doesn't like this, CLANGRT_BUILTINS-NOTFOUND
 #list(APPEND CMAKE_PREFIX_PATH ${GRAVEYARD_ROCM_PATH})
 # the targets hip::host and hip::device are provided by find_package(hip)
 #find_package(hip REQUIRED CONFIG PATHS ${HIP_PATH} ${ROCM_PATH})
@@ -57,19 +58,26 @@ set_source_files_properties(SOURCE main.cpp PROPERTY COMPILE_FLAGS ${HIP_COMPILE
 set_target_properties(runGraveyard PROPERTIES LINK_FLAGS "${GRAVEYARD_OMP_LINK_FLAGS} ${HIP_LINK_FLAGS}")
 
 # add flib as a link dependency
-add_library( flib STATIC)
-add_subdirectory(lib_f)
-set_source_files_properties(SOURCE lib_f/foo_mod.f90 PROPERTY COMPILE_FLAGS ${GRAVEYARD_OMP_FORTRAN_FLAGS})
-target_include_directories( runGraveyard PRIVATE include lib_f)
-target_link_libraries( runGraveyard
-                       flib)
-
+option(ENABLE_FLIB "Enable and build the FLIB library" ON)
+if (ENABLE_FLIB)
+  add_compile_definitions( "ENABLE_FLIB" )
+  add_library( flib STATIC)
+  add_subdirectory(lib_f)
+  set_source_files_properties(SOURCE lib_f/foo_mod.f90 PROPERTY COMPILE_FLAGS ${GRAVEYARD_OMP_FORTRAN_FLAGS})
+  target_include_directories( runGraveyard PRIVATE include lib_f)
+  target_link_libraries( runGraveyard
+                         flib)
+endif()
 
 # add hlib as a link dependency
-add_library( hlib STATIC)
-add_subdirectory(lib_h)
-#set_source_files_properties(SOURCE lib_h/suskevi.cpp PROPERTIES LANGUAGE HIP)
-set_source_files_properties(SOURCE lib_h/suskevi.cpp PROPERTY COMPILE_FLAGS ${HIP_COMPILE_FLAGS})
-target_include_directories( runGraveyard PRIVATE include lib_h)
-target_link_libraries( runGraveyard
-                       hlib)
+option(ENABLE_HLIB "Enable and build the HLIB library" ON)
+if (ENABLE_HLIB)
+  add_compile_definitions( "ENABLE_HLIB" )
+  add_library( hlib STATIC)
+  add_subdirectory(lib_h)
+  #set_source_files_properties(SOURCE lib_h/suskevi.cpp PROPERTIES LANGUAGE HIP)
+  set_source_files_properties(SOURCE lib_h/suskevi.cpp PROPERTY COMPILE_FLAGS ${HIP_COMPILE_FLAGS})
+  target_include_directories( runGraveyard PRIVATE include lib_h)
+  target_link_libraries( runGraveyard
+                         hlib)
+endif()
