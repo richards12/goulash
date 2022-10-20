@@ -2,28 +2,28 @@
 FC=ftn
 CC=CC
 
-LIB_F_PREFIX ?=./lib_f
+LIB_PINDUS_PREFIX ?=./libpindus
 LIB_H_PREFIX ?=./lib_h
 
-CXX_FLAGS = -O3 -I$(LIB_F_PREFIX) -I$(LIB_H_PREFIX) -DENABLE_FLIB -DENABLE_HLIB
+CXX_FLAGS = -O3 -I$(LIB_PINDUS_PREFIX) -I$(LIB_H_PREFIX) -DENABLE_PINDUS -DENABLE_HLIB
 HIP_FLAGS = -I${ROCM_PATH}/include -fgpu-rdc --rocm-path=${ROCM_PATH} --offload-arch=gfx90a -x hip
 FORTRAN_FLAGS=-h omp
 
 LFLAGS=-fopenmp
 HIP_LINK_FLAGS=-fopenmp -fgpu-rdc --hip-link --offload-arch=gfx90a --rocm-path=${ROCM_PATH} -L${ROCM_PATH}/lib -lamdhip64
 
-runGraveyard: main.o libflib.a libhlib.a 
+runGraveyard: main.o libpindus.a libhlib.a 
 	$(CC) -o $@ $(HIP_LINK_FLAGS) $^
 
 main.o: main.cpp
 	$(CC) $(CXX_FLAGS) $(HIP_FLAGS) -o $@ -c $<
 
-.PHONY: libflib.a libhlib.a
-libflib.a: export FC:=$(FC)
-libflib.a: export FORTRAN_FLAGS:= $(FORTRAN_FLAGS)
-libflib.a:
-	make -C lib_f
-	cp lib_f/libflib.a .
+.PHONY: libpindus.a libhlib.a
+libpindus.a: export FC:=$(FC)
+libpindus.a: export FORTRAN_FLAGS:= $(FORTRAN_FLAGS)
+libpindus.a:
+	make -C libpindus
+	cp libpindus/libpindus.a .
 
 libhlib.a: export CC:=$(CC)
 libhlib.a: export CXX_FLAGS:=$(CXX_FLAGS)
@@ -34,6 +34,6 @@ libhlib.a:
 
 .PHONY: clean
 clean:
-	rm -rf *.o runGraveyard *core FOO.mod foo_mod_1.acc.s libhlib.a libflib.a
-	make -C lib_f clean
+	rm -rf *.o runGraveyard *core FOO.mod foo_mod_1.acc.s libhlib.a libpindus.a
+	make -C libpindus clean
 	make -C lib_h clean

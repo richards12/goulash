@@ -18,7 +18,7 @@ set(GRAVEYARD_ROCM_PATH "/opt/rocm-5.2.3" CACHE PATH "ROCm Path")
 #set(CMAKE_HIP_COMPILER "${GRAVEYARD_ROCM_PATH}/bin/amdclang++" CACHE FILEPATH "") # CMAKE doesn't like this, CLANGRT_BUILTINS-NOTFOUND
 
 project( "Graveyard"
-        LANGUAGES CXX Fortran HIP
+        LANGUAGES CXX Fortran
         VERSION ${GRAVEYARD_VERSION} )
 
 #list(APPEND CMAKE_PREFIX_PATH ${GRAVEYARD_ROCM_PATH})
@@ -58,15 +58,15 @@ set_source_files_properties(SOURCE main.cpp PROPERTY COMPILE_FLAGS ${HIP_COMPILE
 set_target_properties(runGraveyard PROPERTIES LINK_FLAGS "${GRAVEYARD_OMP_LINK_FLAGS} ${HIP_LINK_FLAGS}")
 
 # add flib as a link dependency
-option(ENABLE_FLIB "Enable and build the FLIB library" ON)
-if (ENABLE_FLIB)
-  add_compile_definitions( "ENABLE_FLIB" )
-  add_library( flib STATIC)
-  add_subdirectory(lib_f)
-  set_source_files_properties(SOURCE lib_f/foo_mod.f90 PROPERTY COMPILE_FLAGS ${GRAVEYARD_OMP_FORTRAN_FLAGS})
-  target_include_directories( runGraveyard PRIVATE include lib_f)
+option(ENABLE_LIBPINDUS "Enable and build the FLIB library" ON)
+if (ENABLE_LIBPINDUS)
+  add_compile_definitions( "ENABLE_LIBPINDUS" )
+  add_library( pindus STATIC)
+  add_subdirectory(libpindus)
+  set_source_files_properties(SOURCE libpindus/foo_mod.f90 PROPERTY COMPILE_FLAGS ${GRAVEYARD_OMP_FORTRAN_FLAGS})
+  target_include_directories( runGraveyard PRIVATE include libpindus)
   target_link_libraries( runGraveyard
-                         flib)
+                         pindus)
 endif()
 
 # add hlib as a link dependency
