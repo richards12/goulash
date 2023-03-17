@@ -1,0 +1,1 @@
+cmake ../src -DCMAKE_INSTALL_PREFIX=../install -DPINDUS_FORTRAN_FLAGS="-h omp;-target-accel=amd_gfx90a" -DCMAKE_Fortran_COMPILER=crayftn
