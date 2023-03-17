@@ -1,6 +1,6 @@
-#ifndef SUSKEVI_CPP
-#define SUSKEVI_CPP
-#include "suskevi.h"
+#ifndef IONIAN_CPP
+#define IONIAN_CPP
+#include "ionian.h"
 #include "hip/hip_runtime.h"
 
 __device__ double s;
@@ -28,4 +28,4 @@ void libh_initialize(double **d_arr, const int size, double coeff)
 }
 
 
-#endif // SUSKEVI_CPP
+#endif // IONIAN_CPP

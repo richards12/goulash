@@ -1,0 +1,1 @@
+cmake ../src -DCMAKE_INSTALL_PREFIX=../install -DIONIAN_HIP_FLAGS="-fgpu-rdc" -DCMAKE_HIP_COMPILER=amdclang++ -DCMAKE_CXX_COMPILER=amdclang++
