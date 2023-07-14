@@ -16,5 +16,6 @@ set_source_files_properties(SOURCE pindus_mod.f90 PROPERTIES COMPILE_OPTIONS "${
 target_sources( pindus PRIVATE
               pindus_mod.f90)
 
-install( TARGETS pindus )
+install( TARGETS pindus DESTINATION lib EXPORT PindusTargets)
 install( FILES pindus_mod.h DESTINATION include )
+install( EXPORT PindusTargets DESTINATION lib/cmake)
