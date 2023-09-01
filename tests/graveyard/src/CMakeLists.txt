@@ -1,34 +1,31 @@
 cmake_minimum_required( VERSION 3.24.0)
 
 set(PROJECT_NAME Graveyard CACHE STRING "ProjectName")
-set(GRAVEYARD_VERSION "1.0" CACHE STRING "Graveyard Version")
+
 
 
 #set(MPI_C_COMPILER  "cc" CACHE PATH "")
 #set(MPI_CXX_COMPILER  "CC" CACHE PATH "")
 #set(MPI_Fortran_COMPILER "ftn" CACHE PATH "")
 
-set(CMAKE_C_COMPILER "/opt/cray/pe/craype/2.7.17/bin/cc" CACHE FILEPATH "")
-set(CMAKE_CXX_COMPILER "/opt/cray/pe/craype/2.7.17/bin/CC" CACHE FILEPATH "")
-set(CMAKE_Fortran_COMPILER "/opt/cray/pe/craype/2.7.17/bin/ftn" CACHE FILEPATH "")
+#set(CMAKE_C_COMPILER "/opt/cray/pe/craype/2.7.17/bin/cc" CACHE FILEPATH "")
+#set(CMAKE_CXX_COMPILER "/opt/cray/pe/craype/2.7.17/bin/CC" CACHE FILEPATH "")
+#set(CMAKE_Fortran_COMPILER "/opt/cray/pe/craype/2.7.17/bin/ftn" CACHE FILEPATH "")
 
 #set(CMAKE_HIP_COMPILER "/g/g12/makrides/programs/ghoulash/build_2/amdcompiler" CACHE FILEPATH "") # CMAKE doesn't like this, CLANGRT_BUILTINS-NOTFOUND
-set(GRAVEYARD_ROCM_PATH "/opt/rocm-5.2.3" CACHE PATH "ROCm Path")
+#set(GRAVEYARD_ROCM_PATH "/opt/rocm-5.2.3" CACHE PATH "ROCm Path")
 #set(CMAKE_HIP_COMPILER "${GRAVEYARD_ROCM_PATH}/bin/hipcc" CACHE FILEPATH "") # CMAKE doesn't like this, CLANGRT_BUILTINS-NOTFOUND
 #set(CMAKE_HIP_COMPILER "${GRAVEYARD_ROCM_PATH}/bin/amdclang++" CACHE FILEPATH "") # CMAKE doesn't like this, CLANGRT_BUILTINS-NOTFOUND
 
 project( "Graveyard"
-        LANGUAGES CXX Fortran
+        LANGUAGES HIP CXX Fortran
         VERSION ${GRAVEYARD_VERSION} )
 
-#list(APPEND CMAKE_PREFIX_PATH ${GRAVEYARD_ROCM_PATH})
 # the targets hip::host and hip::device are provided by find_package(hip)
-#find_package(hip REQUIRED CONFIG PATHS ${HIP_PATH} ${ROCM_PATH})
+find_package(hip REQUIRED CONFIG PATHS ${GRAVEYARD_ROCM_PATH})
 
-message(STATUS "ROCM path:        ${ROCM_PATH}")
-message(STATUS "HIP version:      ${hip_VERSION}")
-set(HIP_ARCHITECTURES gfx90a CACHE STRING "")
-
+#message(STATUS "ROCM path:        ${ROCM_PATH}")
+#message(STATUS "HIP version:      ${hip_VERSION}")
 
 set(CMAKE_Fortran_FLAGS "-ffree" CACHE PATH "")
 

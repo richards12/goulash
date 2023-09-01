@@ -7,7 +7,7 @@ project( "Pindus"
         VERSION ${PINDUS_VERSION} )
 
 
-set( PINDUS_FORTRAN_FLAGS " " CACHE STRING "Flags passed to Fortran compiler, including for OpenMP")
+set( PINDUS_FORTRAN_FLAGS "" CACHE STRING "Flags passed to Fortran compiler, including for OpenMP")
 
 add_library( pindus STATIC)
 
