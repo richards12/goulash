@@ -6,24 +6,24 @@
 __device__ double s;
 
 __device__
-void libh_add(double &d)
+void ionian_add(double &d)
 { 
   d+=s;
 }
 
 __global__
-void libh_setCoef(double d)
+void ionian_setCoef(double d)
 {
   s = d;
 }
 
-void libh_initialize(double **d_arr, const int size, double coeff)
+void ionian_initialize(double **d_arr, const int size, double coeff)
 {  
    //allocate d_arr on the device
    hipMalloc(d_arr,size*sizeof(double));
    
    //initialize s on the deivce
-   hipLaunchKernelGGL(libh_setCoef,1,1,0,0,coeff);
+   hipLaunchKernelGGL(ionian_setCoef,1,1,0,0,coeff);
    hipDeviceSynchronize();
 }
 

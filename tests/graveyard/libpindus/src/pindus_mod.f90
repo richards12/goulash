@@ -5,7 +5,7 @@ double precision  :: s    ! scalar to be read in
 
 contains
 
-subroutine set_coeff(s_in) BIND(c,name="libf_setCoef")
+subroutine pindus_setCoeff(s_in) BIND(c,name="pindus_setCoef")
 implicit none
 real(c_double), intent(in) ::s_in
 
@@ -13,7 +13,7 @@ real(c_double), intent(in) ::s_in
 
 end subroutine
 
-subroutine libf_mult(arr,n ) BIND(c,name="libf_mult")
+subroutine pindus_mult(arr,n ) BIND(c,name="pindus_mult")
 implicit none
 !type(c_ptr), intent(in) :: arr_in
 real(c_double),intent (inout), dimension(n) :: arr 
