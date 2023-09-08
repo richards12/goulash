@@ -17,5 +17,5 @@ target_sources( pindus PRIVATE
               pindus_mod.f90)
 
 install( TARGETS pindus DESTINATION lib EXPORT PindusTargets)
-install( FILES pindus_mod.h DESTINATION include )
+install( FILES pindus_mod.h DESTINATION include/pindus )
 install( EXPORT PindusTargets DESTINATION lib/cmake)

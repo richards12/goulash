@@ -5,11 +5,11 @@
 #include "hip/hip_runtime.h"
 
 #ifdef ENABLE_PINDUS
-#include "pindus_mod.h"
+#include "pindus/pindus_mod.h"
 #endif
 
 #ifdef ENABLE_IONIAN
-#include "ionian.h"
+#include "ionian/ionian.h"
 
 __global__
 void launchKernel(double *arr,const int size)

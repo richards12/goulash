@@ -3,7 +3,7 @@
 #include "assert.h"
 #include "hip/hip_runtime.h"
 
-#include "pindus_mod.h"
+#include "pindus/pindus_mod.h"
 
 __device__ double s;
 

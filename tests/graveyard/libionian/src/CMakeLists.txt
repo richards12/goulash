@@ -19,5 +19,5 @@ target_sources( ionian PRIVATE
               ionian.cpp)
 
 install( TARGETS ionian DESTINATION lib EXPORT IonianTargets)
-install( FILES ionian.h DESTINATION include)
+install( FILES ionian.h DESTINATION include/ionian)
 install( EXPORT IonianTargets DESTINATION lib/cmake)
