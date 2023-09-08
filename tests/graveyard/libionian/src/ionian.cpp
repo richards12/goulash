@@ -20,11 +20,11 @@ void ionian_setCoef(double d)
 void ionian_initialize(double **d_arr, const int size, double coeff)
 {  
    //allocate d_arr on the device
-   hipMalloc(d_arr,size*sizeof(double));
+   HIP_CHECK(hipMalloc(d_arr,size*sizeof(double)));
    
    //initialize s on the deivce
    hipLaunchKernelGGL(ionian_setCoef,1,1,0,0,coeff);
-   hipDeviceSynchronize();
+   HIP_CHECK(hipDeviceSynchronize());
 }
 
 
