@@ -4,19 +4,19 @@
 #include "assert.h"
 #include "hip/hip_runtime.h"
 
-#ifdef ENABLE_FLIB
-#include "foo_mod.h"
+#ifdef ENABLE_PINDUS
+#include "pindus_mod.h"
 #endif
 
-#ifdef ENABLE_HLIB
-#include "suskevi.h"
+#ifdef ENABLE_IONIAN
+#include "ionian.h"
 
 __global__
 void launchKernel(double *arr,const int size)
 {
   int i = threadIdx.x + blockIdx.x*blockDim.x;
   if(i < size)
-    libh_add(arr[i]);
+    ionian_add(arr[i]);
 }
 #endif
 
@@ -32,16 +32,16 @@ int main(int argc, char** argv)
    
 
 
-#ifdef ENABLE_FLIB
+#ifdef ENABLE_PINDUS
    referenceRes *= coef1;
-   libf_setCoef(coef1);
-   libf_mult(&(aa[0]), (int)aa.size());
-#endif // ENABLE_FLIB
+   pindus_setCoef(coef1);
+   pindus_mult(&(aa[0]), (int)aa.size());
+#endif // ENABLE_PINDUS
 
-#ifdef ENABLE_HLIB
+#ifdef ENABLE_IONIAN
    referenceRes += coef2;
    double *d_aa=NULL;
-   libh_initialize(&d_aa,n,coef2);
+   ionian_initialize(&d_aa,n,coef2);
 
     if(d_aa==NULL)
     {
@@ -57,7 +57,7 @@ int main(int argc, char** argv)
    hipDeviceSynchronize();
    hipMemcpy(&(aa[0]),d_aa,n*sizeof(double), hipMemcpyDeviceToHost);
    hipDeviceSynchronize();
-#endif // ENABLE_HLIB
+#endif // ENABLE_IONIAN
    
 
 // Verification 
@@ -66,7 +66,7 @@ int main(int argc, char** argv)
     // assert(aa[ii] == referenceRes);
     if(aa[ii]!=referenceRes)
     {
-      std::cout<<"Verification Erro: aa[ii]!=referenceRes | aa[ii]="<<aa[ii]<<" referenceRes="<<referenceRes<<std::endl;
+      std::cout<<"Verification Error: aa[ii]!=referenceRes | aa[ii]="<<aa[ii]<<" referenceRes="<<referenceRes<<std::endl;
       assert(aa[ii] == referenceRes);
     }
    }

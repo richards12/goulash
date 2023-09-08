@@ -3,29 +3,29 @@
 #include "assert.h"
 #include "hip/hip_runtime.h"
 
-#include "foo_mod.h"
+#include "pindus_mod.h"
 
 __device__ double s;
 
 __device__
-void libh_add(double &d)
+void ionian_add(double &d)
 {
   d+=s;
 }
 
 __global__
-void libh_setCoef(double d)
+void ionian_setCoef(double d)
 {
   s = d;
 }
 
-void libh_initialize(double **d_arr, const int size, double coeff)
+void ionian_initialize(double **d_arr, const int size, double coeff)
 {
    //allocate d_arr on the device
    hipMalloc(d_arr,size*sizeof(double));
 
    //initialize s on the deivce
-   hipLaunchKernelGGL(libh_setCoef,1,1,0,0,coeff);
+   hipLaunchKernelGGL(ionian_setCoef,1,1,0,0,coeff);
    hipDeviceSynchronize();
 }
 
@@ -34,7 +34,7 @@ void launchKernel(double *arr,const int size)
 {
   int i = threadIdx.x + blockIdx.x*blockDim.x;
   if(i < size)
-    libh_add(arr[i]);
+    ionian_add(arr[i]);
 }
 
 int main(int argc, char** argv)
@@ -46,11 +46,11 @@ int main(int argc, char** argv)
    std::vector<double> aa(n, 1.0);
    
 
-   libf_setCoef(coef1);
-   libf_mult(&(aa[0]), (int)aa.size());
+   pindus_setCoef(coef1);
+   pindus_mult(&(aa[0]), (int)aa.size());
 
    double *d_aa=NULL;
-   libh_initialize(&d_aa,n,coef2);
+   ionian_initialize(&d_aa,n,coef2);
 
     if(d_aa==NULL)
     {
