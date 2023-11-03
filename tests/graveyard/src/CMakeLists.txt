@@ -1,16 +1,15 @@
 cmake_minimum_required( VERSION 3.24.0)
 
-set(PROJECT_NAME Graveyard CACHE STRING "ProjectName")
-
-
+set(PROJECT_NAME Graveyard CACHE STRING "Project Name")
+set(GRAVEYARD_VERSION "1.0" CACHE STRING "Project Version")
 
 #set(MPI_C_COMPILER  "cc" CACHE PATH "")
 #set(MPI_CXX_COMPILER  "CC" CACHE PATH "")
 #set(MPI_Fortran_COMPILER "ftn" CACHE PATH "")
 
-#set(CMAKE_C_COMPILER "/opt/cray/pe/craype/2.7.17/bin/cc" CACHE FILEPATH "")
-#set(CMAKE_CXX_COMPILER "/opt/cray/pe/craype/2.7.17/bin/CC" CACHE FILEPATH "")
-#set(CMAKE_Fortran_COMPILER "/opt/cray/pe/craype/2.7.17/bin/ftn" CACHE FILEPATH "")
+set(CMAKE_C_COMPILER "/opt/cray/pe/craype/2.7.23/bin/cc" CACHE FILEPATH "")
+set(CMAKE_CXX_COMPILER "/opt/cray/pe/craype/2.7.23/bin/CC" CACHE FILEPATH "")
+set(CMAKE_Fortran_COMPILER "/opt/cray/pe/craype/2.7.23/bin/ftn" CACHE FILEPATH "")
 
 #set(CMAKE_HIP_COMPILER "/g/g12/makrides/programs/ghoulash/build_2/amdcompiler" CACHE FILEPATH "") # CMAKE doesn't like this, CLANGRT_BUILTINS-NOTFOUND
 #set(GRAVEYARD_ROCM_PATH "/opt/rocm-5.2.3" CACHE PATH "ROCm Path")
@@ -37,13 +36,14 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3 -g" CACHE PATH "")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -g" CACHE PATH "")
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g" CACHE PATH "")
 
-set(GRAVEYARD_OMP_FORTRAN_FLAGS "-homp" CACHE STRING "Flags needed for fortran OpenMP compiling")
-set(GRAVEYARD_OMP_CXX_FLAGS "-fopenmp" CACHE STRING "Flags needed for C++ OpenMP  compiling")
-
-set(GRAVEYARD_OMP_LINK_FLAGS "-fopenmp" CACHE STRING "Options needed to link in OpenMP")
+if(ENABLE_PINDUS)
+  set(GRAVEYARD_OMP_FORTRAN_FLAGS "-homp" CACHE STRING "Flags needed for fortran OpenMP compiling")
+  set(GRAVEYARD_OMP_CXX_FLAGS "-fopenmp" CACHE STRING "Flags needed for C++ OpenMP  compiling")
+  set(GRAVEYARD_OMP_LINK_FLAGS "-fopenmp" CACHE STRING "Options needed to link in OpenMP")
+endif()
 
 set(HIP_COMPILE_FLAGS "-I${GRAVEYARD_ROCM_PATH}/include -fgpu-rdc --rocm-path=${GRAVEYARD_ROCM_PATH} --offload-arch=gfx90a -x hip" CACHE STRING "Compiler options used to compile HIP code")
-set(HIP_LINK_FLAGS "-fgpu-rdc --hip-link --offload-arch=gfx90a --rocm-path=${GRAVEYARD_ROCM_PATH} -L${GRAVEYARD_ROCM_PATH}/lib -lamdhip64" CACHE STRING "Flags needed to link HIP code with RDC")
+set(HIP_LINK_FLAGS "-fgpu-rdc --hip-link --rocm-path=${GRAVEYARD_ROCM_PATH} -L${GRAVEYARD_ROCM_PATH}/lib -lamdhip64" CACHE STRING "Flags needed to link HIP code with RDC")
 
 #-----------------------------#
 
@@ -55,19 +55,40 @@ set_source_files_properties(SOURCE main.cpp PROPERTY COMPILE_FLAGS ${HIP_COMPILE
 set_target_properties(runGraveyard PROPERTIES LINK_FLAGS "${GRAVEYARD_OMP_LINK_FLAGS} ${HIP_LINK_FLAGS}")
 
 # add flib as a link dependency
-option(ENABLE_LIBPINDUS "Enable and build the FLIB library" ON)
+option(ENABLE_LIBPINDUS "Enable and build the FLIB library" OFF)
 if (ENABLE_LIBPINDUS)
-  add_compile_definitions( "ENABLE_LIBPINDUS" )
-  add_library( pindus STATIC)
-  add_subdirectory(libpindus)
-  set_source_files_properties(SOURCE libpindus/foo_mod.f90 PROPERTY COMPILE_FLAGS ${GRAVEYARD_OMP_FORTRAN_FLAGS})
-  target_include_directories( runGraveyard PRIVATE include libpindus)
-  target_link_libraries( runGraveyard
-                         pindus)
+#  add_compile_definitions( "ENABLE_LIBPINDUS" )
+#  add_library( pindus STATIC)
+#  add_subdirectory(libpindus)
+#  set_source_files_properties(SOURCE libpindus/foo_mod.f90 PROPERTY COMPILE_FLAGS ${GRAVEYARD_OMP_FORTRAN_FLAGS})
+#  target_include_directories( runGraveyard PRIVATE include libpindus)
+#  target_link_libraries( runGraveyard
+#                         pindus)
+  
 endif()
 
-# add hlib as a link dependency
-option(ENABLE_HLIB "Enable and build the HLIB library" ON)
+# Enable Libionian and find the package
+option(ENABLE_IONIAN "Enable Ionian Library" ON)
+if(ENABLE_IONIAN)
+  find_package(ionian
+    CONFIG
+    PATHS ${IONIAN_PREFIX}
+    REQUIRED)
+  if(${ionian_FOUND})
+    message(STATUS "Package ionian was found")
+    add_compile_definitions("GRAVEYARD_ENABLE_IONIAN")
+#    set_target_properties(ionian PROPERTIES IMPORTED_GLOBAL TRUE)
+    target_link_libraries(runGraveyard ionian)
+    if(${IONIAN_USE_RDC})
+#      set_target_properties(runGraveyard PROPERTIES LINK_FLAGS APPEND "-fgpu-rdc -O3") # this replaces
+      # need to use APPEND_STRING since cmake adds a bunch of semi-colons that I can't get rid of
+      # the space is needed in front
+      set_property(TARGET runGraveyard APPEND_STRING PROPERTY LINK_FLAGS " -fgpu-rdc")
+    endif()
+  endif()
+endif()
+
+option(ENABLE_HLIB "Enable and build the HLIB library" OFF)
 if (ENABLE_HLIB)
   add_compile_definitions( "ENABLE_HLIB" )
   add_library( hlib STATIC)

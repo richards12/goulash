@@ -1,0 +1,12 @@
+@PACKAGE_INIT@
+
+set(IONIAN_INSTALL_PREFIX @CMAKE_INSTALL_PREFIX@ CACHE PATH "Ionian Installation Prefix")
+set(IONIAN_USE_RDC @IONIAN_USE_RDC@ CACHE BOOL "Ionian RDC")
+
+add_library(ionian STATIC IMPORTED)
+find_library(IONIAN_LIB_PATH ionian PATHS "${CMAKE_CURRENT_LIST_DIR}/../..")
+set_target_properties(ionian PROPERTIES IMPORTED_LOCATION "${IONIAN_LIB_PATH}")
+
+include("${CMAKE_CURRENT_LIST_DIR}/ionian-targets.cmake")
+
+check_required_components("@PROJECT_NAME@")
