@@ -1,0 +1,15 @@
+@PACKAGE_INIT@
+
+set(PINDUS_INSTALL_PREFIX @CMAKE_INSTALL_PREFIX@ CACHE PATH "Pindus Installation Prefix")
+set(PINDUS_OMPOL_FLAGS @PINDUS_FORTRAN_FLAGS@ CACHE STRING "Pindus Fortran OpenMP Offload Flags")
+
+add_library(pindus STATIC IMPORTED)
+find_library(PINDUS_LIB_PATH pindus PATHS "${CMAKE_CURRENT_LIST_DIR}/../..")
+set_target_properties(pindus PROPERTIES IMPORTED_LOCATION "${PINDUS_LIB_PATH}")
+
+set( PINDUS_MODULE_PATH "${PINDUS_INSTALL_PREFIX}/include/mods" CACHE PATH "")
+set_target_properties(pindus PROPERTIES Fortran_MODULE_DIRECTORY "${PINDUS_MODULE_PATH}" )
+
+include("${CMAKE_CURRENT_LIST_DIR}/pindus-targets.cmake")
+
+check_required_components("@PROJECT_NAME@")

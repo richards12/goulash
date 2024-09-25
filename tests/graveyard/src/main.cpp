@@ -4,11 +4,11 @@
 #include "assert.h"
 #include "hip/hip_runtime.h"
 
-#ifdef ENABLE_PINDUS
+#ifdef GRAVEYARD_ENABLE_PINDUS
 #include "pindus/pindus_mod.h"
 #endif
 
-#ifdef ENABLE_IONIAN
+#ifdef GRAVEYARD_ENABLE_IONIAN
 #include "ionian/ionian.h"
 
 __global__

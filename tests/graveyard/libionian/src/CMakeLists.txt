@@ -6,10 +6,13 @@ project( "Ionian"
         LANGUAGES CXX HIP
         VERSION ${IONIAN_VERSION} )
 
-find_package(HIP)
+#set(CMAKE_PREFIX_PATH "${GRAVEYARD_CCE_PATH}" CACHE STRING "")
+#set(HIP_ROOT_DIR "${GRAVEYARD_CCE_PATH}" CACHE PATH "")
+
+#find_package(HIP)
 
 set( IONIAN_HIP_FLAGS "" CACHE STRING "Flags passed to HIP compiler")
-set( IONIAN_USE_RDC "TRUE" CACHE BOOL "Ionian use RDC" )
+set( IONIAN_USE_RDC "TRUE" CACHE BOOL "Ionian uses RDC" )
 
 add_library( ionian STATIC)
 
