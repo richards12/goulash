@@ -32,13 +32,13 @@ int main(int argc, char** argv)
    
 
 
-#ifdef ENABLE_PINDUS
+#ifdef GRAVEYARD_ENABLE_PINDUS
    referenceRes *= coef1;
    pindus_setCoef(coef1);
    pindus_mult(&(aa[0]), (int)aa.size());
-#endif // ENABLE_PINDUS
+#endif // GRAVEYARD_ENABLE_PINDUS
 
-#ifdef ENABLE_IONIAN
+#ifdef GRAVEYARD_ENABLE_IONIAN
    referenceRes += coef2;
    double *d_aa=NULL;
    ionian_initialize(&d_aa,n,coef2);
@@ -57,7 +57,7 @@ int main(int argc, char** argv)
    hipDeviceSynchronize();
    hipMemcpy(&(aa[0]),d_aa,n*sizeof(double), hipMemcpyDeviceToHost);
    hipDeviceSynchronize();
-#endif // ENABLE_IONIAN
+#endif // GRAVEYARD_ENABLE_IONIAN
    
 
 // Verification 
