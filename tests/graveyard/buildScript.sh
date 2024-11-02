@@ -10,9 +10,12 @@ case `hostname` in
     rzvernal*)
 	ARCH=EAS3
 	;;
+    rzadams*)
+	ARCH=EAS3
+	;;
     lassen* | rzansel*)
-        ARCH=ATS2
-        ;;
+  ARCH=ATS2
+  ;;
 esac
 
 if [ $ARCH = EAS3 ]
@@ -20,37 +23,37 @@ then
     # For now, must load rocm module (version 5.5.1 for CCE 16). cmake
     # appears to be using either PATH or LD_LIBRARY_PATH for
     # something.
-    CXX=/opt/cray/pe/cce/16.0.1/bin/craycxx
-    F90=/opt/cray/pe/cce/16.0.1/bin/crayftn
+    HOSTCONFIG_FILE=lc-rzadams.cmake
     
 fi
 
 
-
-mkdir libpindus/build
+# build libpindus
+mkdir libpindus/build libpindus/install
 pushd libpindus/build
 
-# Also we shouldn't have to pass in our own OpenMP flags.  We need to
-# improve the CMakeLists.txt to do OpenMP the "right" way.
-cmake ../src/CMakeLists.txt \
-      -DCMAKE_INSTALL_PREFIX=../install \
-      -DCMAKE_CXX_COMPILER=$CXX \
-      -DCMAKE_Fortran_COMPILER=$F90 \
-      -DPINDUS_FORTRAN_FLAGS="-fopenmp;--rocm-path=$ROCM_PATH;-target-accel=amd_gfx90a" 
+cmake -C ../../host_configs/lc-rzadams.cmake -DCMAKE_INSTALL_PREFIX=../install ../src
 
 cmake --build .
 cmake --install .
 
 popd
 
-mkdir libionian/build
+# build libionian
+mkdir libionian/build libionian/install
 pushd libionian/build
 
-cmake ../src/CMakeLists.txt \
-      -DCMAKE_INSTALL_PREFIX=../install \
-      -DCMAKE_CXX_COMPILER=$CXX 
+cmake -C ../../host_configs/lc-rzadams.cmake -DCMAKE_INSTALL_PREFIX=../install ../src
 cmake --build .
 cmake --install .
 
 popd
 
+# build driver
+mkdir build install
+pushd build
+
+cmake -C ../host_configs/lc-rzadams.cmake -DCMAKE_INSTALL_PREFIX=../install -DENABLE_PINDUS=ON -DENABLE_IONIAN=ON -DPINDUS_PREFIX=../libpindus/install -DIONIAN_PREFIX=../libionian/install ../src
+cmake --build .
+cmake --install .
+popd

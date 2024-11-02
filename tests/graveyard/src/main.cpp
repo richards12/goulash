@@ -51,12 +51,12 @@ int main(int argc, char** argv)
     }
    
    //copy aa to d_aa on the device
-   hipMemcpy(d_aa,&(aa[0]),n*sizeof(double), hipMemcpyHostToDevice);
-   hipDeviceSynchronize();
+   HIP_CHECK(hipMemcpy(d_aa,&(aa[0]),n*sizeof(double), hipMemcpyHostToDevice));
+   HIP_CHECK(hipDeviceSynchronize());
    hipLaunchKernelGGL(launchKernel,n,1,0,0,d_aa, (int)aa.size());
-   hipDeviceSynchronize();
-   hipMemcpy(&(aa[0]),d_aa,n*sizeof(double), hipMemcpyDeviceToHost);
-   hipDeviceSynchronize();
+   HIP_CHECK(hipDeviceSynchronize());
+   HIP_CHECK(hipMemcpy(&(aa[0]),d_aa,n*sizeof(double), hipMemcpyDeviceToHost));
+   HIP_CHECK(hipDeviceSynchronize());
 #endif // GRAVEYARD_ENABLE_IONIAN
    
 

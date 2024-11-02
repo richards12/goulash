@@ -6,9 +6,6 @@ project( "Ionian"
         LANGUAGES CXX HIP
         VERSION ${IONIAN_VERSION} )
 
-#set(CMAKE_PREFIX_PATH "${GRAVEYARD_CCE_PATH}" CACHE STRING "")
-#set(HIP_ROOT_DIR "${GRAVEYARD_CCE_PATH}" CACHE PATH "")
-
 #find_package(HIP)
 
 set( IONIAN_HIP_FLAGS "" CACHE STRING "Flags passed to HIP compiler")
@@ -30,7 +27,6 @@ target_sources( ionian PRIVATE
 install( TARGETS ionian DESTINATION lib EXPORT ionian-targets)
 install( FILES ionian.h DESTINATION include/ionian)
 
-#include(CMakeDependentOption)
 include(CMakePackageConfigHelpers) # needed for configure_package_config_file 
 configure_package_config_file(
   "${PROJECT_SOURCE_DIR}/ionian-config.cmake.in"
